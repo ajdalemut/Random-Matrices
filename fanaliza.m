@@ -1,25 +1,34 @@
 
 function [stevilo_realnih_lastnih, vse_lastne, vse_sledi, vse_det] = fanaliza(n, st_ponovitev)
 
-    stevilo_realnih_lastnih = zeros(st_ponovitev, 1); %vector of numbers of real eigenvalues
+    stevilo_realnih_lastnih = zeros(st_ponovitev, 1); % vector of numbers of real eigenvalues
     vse_lastne = zeros(n, st_ponovitev); % matrix of all eigenvalues
-    vse_sledi = zeros(st_ponovitev,1); %vector of all traces
-    vse_det = zeros(st_ponovitev,1); %vector of all determinants
+    vse_sledi = zeros(st_ponovitev,1); % vector of all traces
+    vse_det = zeros(st_ponovitev,1); % vector of all determinants
 
     for k = 1 : st_ponovitev
+        
+        
+        %% generating of a random matrix
+        % uniformly distributed random numbers in the interval (0,1)
+        % A = rand(n);
+        
+        % uniformly distributed random integers in the range defined by r
+        A = randi(10,n);
+        
+        % normally distributed random numbers
+        % A = randn(n);
+        
+        % random symmetric matrix
+        % A = tril(A) + triu(A',1); 
 
-        % naklju?na matrika (uni/normal/symmetric)
-        A = rand(n,n);
-        % A = randn(n,n); 
-        % A = tril(A) + triu(A',1);
-
-        %izra?un lastnih vrednosti
+        %% calculation of eigenvalues
         lastne = eig(A);
         for l = 1 : n
             vse_lastne(l,k)= lastne(l);
         end
 
-        %izracun st lastnih vrednosti
+        %% number of real eigenvalues
         st_realnih_lastnih= 0;
         for i = 1:length(lastne)
             if isreal(lastne(i))
@@ -32,10 +41,10 @@ function [stevilo_realnih_lastnih, vse_lastne, vse_sledi, vse_det] = fanaliza(n,
 
         stevilo_realnih_lastnih(k)= st_realnih_lastnih;
 
-        %izracun sledi nakljucne matrike
+        %% calculation of trace
         vse_sledi(k) = trace(A);
 
-        %izracun determinante nakljucne matrike
+        %% calculation of determinant
         vse_det(k) = det(A);
 
     end
