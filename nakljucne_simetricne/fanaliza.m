@@ -24,7 +24,7 @@ function [stevilo_realnih_lastnih, vse_lastne, vse_sledi, vse_det] = fanaliza(n,
         end
 
         % random symmetric matrix
-        % A = tril(A) + triu(A',1); 
+        A = tril(A) + triu(A',1); 
 
         %% calculation of eigenvalues
         lastne = eig(A);
