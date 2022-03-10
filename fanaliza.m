@@ -1,8 +1,9 @@
 
-function [stevilo_realnih_lastnih, vse_lastne, vse_sledi, vse_det] = fanaliza(n, st_ponovitev, d)
+function [stevilo_realnih_lastnih, vse_lastne, normvse_lastne, vse_sledi, vse_det] = fanaliza(n, st_ponovitev, d)
 
     stevilo_realnih_lastnih = zeros(st_ponovitev, 1); % vector of numbers of real eigenvalues
     vse_lastne = zeros(n, st_ponovitev); % matrix of all eigenvalues
+    normvse_lastne = zeros(n, st_ponovitev); % lamda/sqrt(n)
     vse_sledi = zeros(st_ponovitev,1); % vector of all traces
     vse_det = zeros(st_ponovitev,1); % vector of all determinants
 
@@ -20,23 +21,21 @@ function [stevilo_realnih_lastnih, vse_lastne, vse_sledi, vse_det] = fanaliza(n,
             % normally distributed random numbers
             A = randn(n);
         else
-            error('unidentified distribution')
+            error('Unidentified distribution')
         end
-
-        % random symmetric matrix
-        % A = tril(A) + triu(A',1); 
 
         %% calculation of eigenvalues
         lastne = eig(A);
         for l = 1 : n
-            vse_lastne(l,k)= lastne(l);
+            vse_lastne(l,k) = lastne(l);
+            normvse_lastne(l,k) = lastne(l)/sqrt(n);
         end
 
         %% number of real eigenvalues
-        st_realnih_lastnih= 0;
-        for i = 1:length(lastne)
+        st_realnih_lastnih = 0;
+        for i = 1 : n
             if isreal(lastne(i))
-                st_realnih_lastnih = st_realnih_lastnih + 1  ;
+                st_realnih_lastnih = st_realnih_lastnih + 1;
             else
                 continue
             end

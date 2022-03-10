@@ -1,6 +1,6 @@
 
 % dolocimo velikost nakljucne matrike, porazdelitev za konstrukcijo in stevilo ponovitev konstrukcije
-d = 'norm'; % 'uni'/'int'/'norm'
+d = 'int'; % 'uni'/'int'/'norm'
 n = 50;
 st_ponovitev = 200;
 
@@ -21,7 +21,8 @@ saveas(gcf, vselastne)
 
 % Graf sledi 
 figure
-histogram(vse_sledi)
+pd2 = fitdist(vse_sledi,'Normal');
+histfit(vse_sledi,20)
 title('Graf vseh sledi v kompleksni ravnini')
 sledi = sprintf('sledi_%s_%d_%d.eps',d,n,st_ponovitev);
 saveas(gcf, sledi)
