@@ -16,10 +16,15 @@ function [stevilo_realnih_lastnih, vse_lastne, normvse_lastne, vse_sledi, vse_de
             A = rand(n);
         elseif matches(d,'int')
             % uniformly distributed random integers in the range defined by r
-            A = randi(10,n);
+            A = randi([-5,5],n);
         elseif matches(d,'norm')
             % normally distributed random numbers
             A = randn(n);
+        elseif matches(d,'discr')
+            %descrete with elements a and b, both with the same probability
+            a = 0;
+            b = 1;
+            A = a + (b-a) * randi([0, 1], n);
         else
             error('Unidentified distribution')
         end

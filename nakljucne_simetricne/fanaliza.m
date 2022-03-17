@@ -1,13 +1,11 @@
 
-function [stevilo_realnih_lastnih, vse_lastne, vse_sledi, vse_det] = fanaliza(n, st_ponovitev, d)
+function [vse_lastne, vse_sledi, vse_det] = fanaliza(n, st_ponovitev, d)
 
-    stevilo_realnih_lastnih = zeros(st_ponovitev, 1); % vector of numbers of real eigenvalues
     vse_lastne = zeros(n, st_ponovitev); % matrix of all eigenvalues
     vse_sledi = zeros(st_ponovitev,1); % vector of all traces
     vse_det = zeros(st_ponovitev,1); % vector of all determinants
 
     for k = 1 : st_ponovitev
-        
         
     %% generating of a random matrix
         if matches(d,'uni')
@@ -31,19 +29,6 @@ function [stevilo_realnih_lastnih, vse_lastne, vse_sledi, vse_det] = fanaliza(n,
         for l = 1 : n
             vse_lastne(l,k)= lastne(l);
         end
-
-        %% number of real eigenvalues
-        st_realnih_lastnih= 0;
-        for i = 1:length(lastne)
-            if isreal(lastne(i))
-                st_realnih_lastnih = st_realnih_lastnih + 1  ;
-            else
-                continue
-            end
-
-        end
-
-        stevilo_realnih_lastnih(k)= st_realnih_lastnih;
 
         %% calculation of trace
         vse_sledi(k) = trace(A);

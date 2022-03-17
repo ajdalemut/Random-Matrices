@@ -1,9 +1,7 @@
-
 % dolocimo velikost nakljucne matrike, porazdelitev za konstrukcijo in stevilo ponovitev konstrukcije
-d = 'norm'; % 'uni'/'int'/'norm'
-n = 50;
+d = 'norm'; % 'uni'/'int'/'norm'/'discr'
+n = 400;
 st_ponovitev = 400;
-
 
 %zaženemo glavno funkcijo glede na izbrane spremenljivke
 [stevilo_realnih_lastnih, vse_lastne, normvse_lastne, vse_sledi, vse_det] = fanaliza(n, st_ponovitev, d);
@@ -94,25 +92,26 @@ if matches(d,'uni')
     figure
     pd2 = fitdist(vse_sledi,'Normal');
     histfit(vse_sledi,20)
-    title('Graf vseh sledi v kompleksni ravnini')
+    title('Histogram vseh sledi')
     sledi = sprintf('sledi_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, sledi)
 
+    fprintf('Pricakovana vrednost sledi: %f \n' , pd2.mu);
+    fprintf('Varianca sledi: %f \n' , pd2.sigma);
 
     %% Graf determinant
     figure
     histogram(vse_det,30)
-    title('Graf vseh determinant v kompleksni ravnini')
+    title('Histogram vseh determinant')
     determinante = sprintf('determinante_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, determinante)
     
-    
-
 %----------------INT-------------------------------
 elseif matches(d,'int')
     
     %% Graf lastnih vrednosti
     figure
+    axis equal
     plot(real(vse_lastne), imag(vse_lastne),'.')
     title('Graf vseh lastnih vrednosti v kompleksni ravnini')
     vselastne = sprintf('vselastne_%s_%d_%d.eps',d,n,st_ponovitev);
@@ -153,15 +152,17 @@ elseif matches(d,'int')
     figure
     pd2 = fitdist(vse_sledi,'Normal');
     histfit(vse_sledi,20)
-    title('Graf vseh sledi v kompleksni ravnini')
+    title('Histogram vseh sledi')
     sledi = sprintf('sledi_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, sledi)
 
+    fprintf('Pricakovana vrednost sledi: %f \n' , pd2.mu);
+    fprintf('Varianca sledi: %f \n' , pd2.sigma);
 
     %% Graf determinant
     figure
     histogram(vse_det,30)
-    title('Graf vseh determinant v kompleksni ravnini')
+    title('Histogram vseh determinant')
     determinante = sprintf('determinante_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, determinante)
     
@@ -218,8 +219,8 @@ elseif matches(d,'norm')
     saveas(gcf, st_realnih)
 
     %% Tabela teoretinih in eksperimentalnih pricakovanih vrednosti
-    teoreticna_pricakovana = [ 1 , 1.41421, 1.70711, 1.94454, 2.14905];
-    tabela = table( teoreticna_pricakovana', y(1:5)','VariableNames',["Teoreticna pricakovana vrednost","Eksperimentalna pricakovana vrednost"]);
+    teoreticna_pricakovana = [ 1, 1.41421, 1.70711, 1.94454, 2.14905, 2.33124, 2.49708, 2.65027, 2.79332, 2.92799];
+    tabela = table( teoreticna_pricakovana', y(1:10)','VariableNames',["Teoreticna pricakovana vrednost","Eksperimentalna pricakovana vrednost"]);
     pricakovana = sprintf('pricakovana_%s_%d_%d.txt',d,n,st_ponovitev);
     writetable(tabela, pricakovana);
     
@@ -244,15 +245,77 @@ elseif matches(d,'norm')
     %histogram(vse_sledi,20)
     pd2 = fitdist(vse_sledi,'Normal');
     histfit(vse_sledi,20)
-    title('Graf vseh sledi v kompleksni ravnini')
+    title('Histogram vseh sledi')
     sledi = sprintf('sledi_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, sledi)
+    
+    fprintf('Pricakovana vrednost sledi: %f \n' , pd2.mu);
+    fprintf('Varianca sledi: %f \n' , pd2.sigma);
 
 
     %% Graf determinant
     figure
     histogram(vse_det,30)
-    title('Graf vseh determinant v kompleksni ravnini')
+    title('Histogram vseh determinant')
+    determinante = sprintf('determinante_%s_%d_%d.eps',d,n,st_ponovitev);
+    saveas(gcf, determinante)
+    
+%----------DISCR----------    
+elseif matches(d,'discr')
+    %% Graf lastnih vrednosti
+    figure
+    axis equal
+    plot(real(vse_lastne), imag(vse_lastne),'.')
+    title('Graf vseh lastnih vrednosti v kompleksni ravnini')
+    vselastne = sprintf('vselastne_%s_%d_%d.eps',d,n,st_ponovitev);
+    saveas(gcf, vselastne)
+
+    %% Graf pricakovane vrednosti realnih lastnih v odvisnosti od velikosti matrike
+    figure
+    ft = fittype('a*x^b'); %Zakaj ??
+    a = 1.5; 
+    b = 0.4; % ~ 1/2 -> korenska funkcija
+    f = fit(x',y',ft);
+    plot(f);
+    hold on;
+    plot(x, y,'.');
+    title('Graf pricakovane vrednosti stevila realnih lastnih vrednosti')
+    xlabel('Velikost matrike')
+    ylabel('Pricakovana vrednost stevila realnih lastnih vrednosti')
+    st_realnih = sprintf('st_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
+    saveas(gcf, st_realnih)
+    
+    %% Graf deleža realnih lastnih vrednosti
+    figure
+    ft=fittype('a*x^b'); %Zakaj ??
+    a = 1.2; 
+    b = -0.5; % -> korenska funkcija
+    f = fit(x',z',ft);
+    plot(f);
+    hold on;
+    plot(x,z,'.');
+    title('Graf deleza realnih lastnih vrednosti v odvisnosti od velikosti matrike')
+    xlabel('Velikost matrike')
+    ylabel('Delez realnih lastnih vrednosti')
+    delez_realnih = sprintf('delez_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
+    saveas(gcf, delez_realnih)
+
+
+    %% Graf sledi 
+    figure
+    pd2 = fitdist(vse_sledi,'Normal');
+    histfit(vse_sledi,20)
+    title('Histogram vseh sledi')
+    sledi = sprintf('sledi_%s_%d_%d.eps',d,n,st_ponovitev);
+    saveas(gcf, sledi)
+
+    fprintf('Pricakovana vrednost sledi: %f \n' , pd2.mu);
+    fprintf('Varianca sledi: %f \n' , pd2.sigma);
+
+    %% Graf determinant
+    figure
+    histogram(vse_det,30)
+    title('Histogram vseh determinant')
     determinante = sprintf('determinante_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, determinante)
     
