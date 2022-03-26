@@ -1,0 +1,77 @@
+n = 20;
+st_ponovitev = 20000;
+
+[vse_lastne_GOE, normvse_lastne_GOE, spacing_GOE, mean_spacing_GOE] = GOE_fanaliza(n, st_ponovitev);
+[vse_lastne_GUE, normvse_lastne_GUE, spacing_GUE, mean_spacing_GUE] = GUE_fanaliza(n, st_ponovitev);
+[vse_lastne_GSE, normvse_lastne_GSE, spacing_GSE, mean_spacing_GSE] = GSE_fanaliza(n, st_ponovitev);
+
+% density of eigenvalues-----------------------------------
+figure
+[values1, edges1] = histcounts(vse_lastne_GOE, 30,'Normalization', 'pdf');
+centers1 = (edges1(1:end-1)+edges1(2:end))/2;
+
+[values2, edges2] = histcounts(vse_lastne_GUE, 30,'Normalization', 'pdf');
+centers2 = (edges2(1:end-1)+edges2(2:end))/2;
+
+[values3, edges3] = histcounts(vse_lastne_GSE, 30,'Normalization', 'pdf');
+centers3 = (edges3(1:end-1)+edges3(2:end))/2;
+
+plot(centers1, values1, '-', centers2, values2, '-', centers3, values3, '-')
+
+legend('GOE','GUE', 'GSE')
+
+% lastne = sprintf('lastne_%d_%d.eps',n,st_ponovitev);
+% saveas(gcf, lastne)
+
+%---------level spacing---------------------------------------------
+x = linspace(0,10,1000);
+y1=(pi/2).*x.*exp(-(pi/4 ).*(x.^2));
+y1=(32/(pi^2).*(x.^2).*exp(-(4/pi).*(x.^2));
+y1=(2^18/(3^6).*x.*exp(-(pi/4 ).*x.^2);
+
+figure
+
+[values1, edges1] = histcounts(spacing_GOE,30,'Normalization', 'pdf');
+centers1 = (edges1(1:end-1)+edges1(2:end))/2;
+
+[values2, edges2] = histcounts(spacing_GUE,30,'Normalization', 'pdf');
+centers2 = (edges2(1:end-1)+edges2(2:end))/2;
+
+[values3, edges3] = histcounts(spacing_GSE, 30,'Normalization', 'pdf');
+centers3 = (edges3(1:end-1)+edges3(2:end))/2;
+
+plot(centers1, values1, '-', centers2, values2, '-', centers3, values3, '-')
+hold on
+plot(x,y1)
+
+legend('GOE','GUE','GSE')
+
+% spacing = sprintf('spacing_%d_%d.eps',n,st_ponovitev);
+% saveas(gcf, spacing)
+
+%----------------------------------------------------------------------
+figure
+
+[values1, edges1] = histcounts(vse_lastne_GOE./mean_spacing_GOE,40,'Normalization', 'pdf');
+centers1 = (edges1(1:end-1)+edges1(2:end))/2;
+
+[values2, edges2] = histcounts(vse_lastne_GUE./mean_spacing_GUE,40,'Normalization', 'pdf');
+centers2 = (edges2(1:end-1)+edges2(2:end))/2;
+
+[values3, edges3] = histcounts(vse_lastne_GUE./mean_spacing_GSE,40,'Normalization', 'pdf');
+centers3 = (edges3(1:end-1)+edges3(2:end))/2;
+
+plot(centers1, values1, '-', centers2, values2, '-', centers3, values3, '-')
+
+legend('GOE','GUE','GSE')
+
+
+
+%-----------------------------------------------------------
+% figure 
+% histogram(sGOE,'Normalization','pdf')
+% hold on
+% histogram(sGUE,'Normalization','pdf')
+% hold off
+
+

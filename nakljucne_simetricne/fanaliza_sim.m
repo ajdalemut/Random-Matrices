@@ -1,5 +1,4 @@
-
-function [vse_lastne, vse_sledi, vse_det] = fanaliza(n, st_ponovitev, d)
+function [vse_lastne, vse_sledi, vse_det] = fanaliza_sim(n, st_ponovitev, d)
 
     vse_lastne = zeros(n, st_ponovitev); % matrix of all eigenvalues
     vse_sledi = zeros(st_ponovitev,1); % vector of all traces
@@ -17,6 +16,11 @@ function [vse_lastne, vse_sledi, vse_det] = fanaliza(n, st_ponovitev, d)
         elseif matches(d,'norm')
             % normally distributed random numbers
             A = randn(n);
+        elseif matches(d,'discr')
+            %descrete with elements a and b, both with the same probability
+            a = 0;
+            b = 1;
+            A = a + (b-a) * randi([0, 1], n);
         else
             error('unidentified distribution')
         end
