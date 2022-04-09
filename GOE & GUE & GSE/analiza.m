@@ -1,9 +1,9 @@
 n = 50;
 st_ponovitev = 50000;
 
-[vse_lastne_GOE, normvse_lastne_GOE, spacing_GOE, mean_spacing_GOE] = GOE_fanaliza(n, st_ponovitev);
-[vse_lastne_GUE, normvse_lastne_GUE, spacing_GUE, mean_spacing_GUE] = GUE_fanaliza(n, st_ponovitev);
-[vse_lastne_GSE, normvse_lastne_GSE, spacing_GSE, mean_spacing_GSE] = GSE_fanaliza(n, st_ponovitev);
+[vse_lastne_GOE, normvse_lastne_GOE, spacing_GOE, mean_spacing_GOE] = fanaliza(n, st_ponovitev, 'GOE');
+[vse_lastne_GUE, normvse_lastne_GUE, spacing_GUE, mean_spacing_GUE] = fanaliza(n, st_ponovitev, 'GUE');
+[vse_lastne_GSE, normvse_lastne_GSE, spacing_GSE, mean_spacing_GSE] = fanaliza(n, st_ponovitev, 'GSE');
 
 % density of eigenvalues-----------------------------------
 figure

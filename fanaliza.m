@@ -6,6 +6,7 @@ function [stevilo_realnih_lastnih, vse_lastne, normvse_lastne, vse_sledi, vse_de
     normvse_lastne = zeros(n, st_ponovitev); % lamda/sqrt(n)
     vse_sledi = zeros(st_ponovitev,1); % vector of all traces
     vse_det = zeros(st_ponovitev,1); % vector of all determinants
+    realni_koren = zeros(st_ponovitev,1);
 
     for k = 1 : st_ponovitev
         
@@ -54,6 +55,9 @@ function [stevilo_realnih_lastnih, vse_lastne, normvse_lastne, vse_sledi, vse_de
 
         %% calculation of determinant
         vse_det(k) = det(A);
+        
+        B = sqrtm(A);
+        realni_koren(k) = isreal(B);
 
     end
 end

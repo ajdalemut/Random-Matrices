@@ -1,11 +1,15 @@
 % dolocimo velikost nakljucne matrike, porazdelitev za konstrukcijo in stevilo ponovitev konstrukcije
-d = 'norm'; % 'uni'/'int'/'norm'/'discr'
-n = 400;
-st_ponovitev = 400;
 
+d = 'uni'; % 'uni'/'int'/'norm'/'discr'
+n = 20;
+st_ponovitev = 100;
+
+%-------------------------------------------------------------------------------------
 %zaženemo glavno funkcijo glede na izbrane spremenljivke
 [stevilo_realnih_lastnih, vse_lastne, normvse_lastne, vse_sledi, vse_det] = fanaliza(n, st_ponovitev, d);
 
+
+%% ------------ANALIZA-----------------------------------------------------------
 %% Verjetnosti
 
 st_vsajenarealna = 0;
@@ -30,22 +34,19 @@ fprintf('Povprecje stevila realnih: %.3f \n' , povprecje_st_realnih);
 
 %% Pomožna funkcija za paramatre v odvisnosti od velikosti matrike
 
-maxdim=100;
+maxdim = 100; %maksimalna velikost matrike
 x = 1:1:maxdim;
 y = zeros(1,maxdim);
 z = zeros(1,maxdim);
-w = zeros(1,maxdim);
 for i = x
-    [stevilo_realnih_lastnih1, vse_lastne1, normvse_lastne1, vse_sledi1, vse_det1] = fanaliza(i, st_ponovitev,d);
-    povprecje_st_realnih = mean(stevilo_realnih_lastnih1);
-    y(i) =  povprecje_st_realnih; %povprecno stevilo realnih
+    [stevilo_realnih_lastnih1, vse_lastne1, normvse_lastne1, vse_sledi1, vse_det1] = fanaliza(i, st_ponovitev, d);
+    y(i) =  mean(stevilo_realnih_lastnih1); %povprecno stevilo realnih
     z(i) = y(i)/i ; %delež realnih
-    w(i) = mean(vse_det1)^2;
 end
 
 
 %% --------ANALIZA GLEDE NA DISTRIBUCIJO---------------------------------------------
-
+%------------------------------------------------------------------------------------
 
 %-------UNI-------------------------------------------------------
 if matches(d,'uni')
@@ -53,22 +54,20 @@ if matches(d,'uni')
     %% Graf lastnih vrednosti
     figure
     plot(real(vse_lastne), imag(vse_lastne),'.')
-    title('Graf vseh lastnih vrednosti v kompleksni ravnini')
+    title('(a) Graf vseh lastnih vrednosti v kompleksni ravnini', 'FontSize', 15)
     vselastne = sprintf('vselastne_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, vselastne)
 
     %% Graf pricakovane vrednosti realnih lastnih v odvisnosti od velikosti matrike
     figure
-    ft = fittype('a*x^b'); %Zakaj ??
-    a = 1.5; 
-    b = 0.4; % ~ 1/2 -> korenska funkcija
+    ft=fittype('A*sqrt(x)');
+    A=sqrt(2/pi);
     f = fit(x',y',ft);
     plot(f);
     hold on;
     plot(x, y,'.');
-    title('Graf pricakovane vrednosti stevila realnih lastnih vrednosti')
-    xlabel('Velikost matrike')
-    ylabel('Pricakovana vrednost stevila realnih lastnih vrednosti')
+    title('(a) Graf pricakovane vrednosti stevila realnih lastnih vrednosti','FontSize', 15)
+    xlabel('Velikost matrike','FontSize', 15)
     st_realnih = sprintf('st_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, st_realnih)
     
@@ -81,9 +80,9 @@ if matches(d,'uni')
     plot(f);
     hold on;
     plot(x,z,'.');
-    title('Graf deleza realnih lastnih vrednosti v odvisnosti od velikosti matrike')
-    xlabel('Velikost matrike')
-    ylabel('Delez realnih lastnih vrednosti')
+    title('(a) Graf deleza realnih lastnih vrednosti v odvisnosti od velikosti matrike','FontSize', 15)
+    xlabel('Velikost matrike','FontSize', 15)
+    ylabel('Delez realnih lastnih vrednosti','FontSize', 15)
     delez_realnih = sprintf('delez_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, delez_realnih)
 
@@ -92,7 +91,7 @@ if matches(d,'uni')
     figure
     pd2 = fitdist(vse_sledi,'Normal');
     histfit(vse_sledi,20)
-    title('Histogram vseh sledi')
+    title('(a) Histogram vseh sledi','FontSize', 15)
     sledi = sprintf('sledi_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, sledi)
 
@@ -102,7 +101,7 @@ if matches(d,'uni')
     %% Graf determinant
     figure
     histogram(vse_det,30)
-    title('Histogram vseh determinant')
+    title('(a) Histogram vseh determinant','FontSize', 15)
     determinante = sprintf('determinante_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, determinante)
     
@@ -111,24 +110,22 @@ elseif matches(d,'int')
     
     %% Graf lastnih vrednosti
     figure
-    axis equal
     plot(real(vse_lastne), imag(vse_lastne),'.')
-    title('Graf vseh lastnih vrednosti v kompleksni ravnini')
+    axis equal
+    title('(b) Graf vseh lastnih vrednosti v kompleksni ravnini','FontSize', 15)
     vselastne = sprintf('vselastne_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, vselastne)
 
     %% Graf pricakovane vrednosti realnih lastnih v odvisnosti od velikosti matrike
     figure
-    ft = fittype('a*x^b'); %Zakaj ??
-    a = 1.4; 
-    b = 0.4; % ~ 1/2 -> korenska funkcija
+    ft=fittype('A*sqrt(x)');
+    A=sqrt(2/pi);
     f = fit(x',y',ft);
     plot(f);
     hold on;
     plot(x, y,'.');
-    title('Graf pricakovane vrednosti stevila realnih lastnih vrednosti')
-    xlabel('Velikost matrike')
-    ylabel('Pricakovana vrednost stevila realnih lastnih vrednosti')
+    title('(b) Graf pricakovane vrednosti stevila realnih lastnih vrednosti','FontSize', 15)
+    xlabel('Velikost matrike','FontSize', 15)
     st_realnih = sprintf('st_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, st_realnih)
     
@@ -141,9 +138,9 @@ elseif matches(d,'int')
     plot(f);
     hold on;
     plot(x,z,'.');
-    title('Graf deleza realnih lastnih vrednosti v odvisnosti od velikosti matrike')
-    xlabel('Velikost matrike')
-    ylabel('Delez realnih lastnih vrednosti')
+    title('(b) Graf deleza realnih lastnih vrednosti v odvisnosti od velikosti matrike','FontSize', 15)
+    xlabel('Velikost matrike','FontSize', 15)
+    ylabel('Delez realnih lastnih vrednosti','FontSize', 15)
     delez_realnih = sprintf('delez_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, delez_realnih)
 
@@ -152,7 +149,7 @@ elseif matches(d,'int')
     figure
     pd2 = fitdist(vse_sledi,'Normal');
     histfit(vse_sledi,20)
-    title('Histogram vseh sledi')
+    title('(b) Histogram vseh sledi','FontSize', 15)
     sledi = sprintf('sledi_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, sledi)
 
@@ -162,7 +159,7 @@ elseif matches(d,'int')
     %% Graf determinant
     figure
     histogram(vse_det,30)
-    title('Histogram vseh determinant')
+    title('(b) Histogram vseh determinant','FontSize', 15)
     determinante = sprintf('determinante_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, determinante)
     
@@ -173,7 +170,7 @@ elseif matches(d,'norm')
     figure
     plot(real(vse_lastne), imag(vse_lastne),'.')
     axis equal
-    title('Graf vseh lastnih vrednosti v kompleksni ravnini')
+    title('(c) Graf vseh lastnih vrednosti v kompleksni ravnini','FontSize', 15)
     vselastne = sprintf('vselastne_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, vselastne)
 
@@ -182,7 +179,7 @@ elseif matches(d,'norm')
     figure
     plot(real(normvse_lastne), imag(normvse_lastne),'.');
     axis equal
-    title('Graf vseh normaliziranih lastnih vrednosti v kompleksni ravnini')
+    title('Graf vseh normaliziranih lastnih vrednosti v kompleksni ravnini','FontSize', 15)
     norm_vselastne = sprintf('norm_vselastne_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, norm_vselastne)
 
@@ -192,9 +189,9 @@ elseif matches(d,'norm')
     histogram(normvse_lastne(idx),'Normalization','pdf');
     pd1 = makedist('Uniform','Lower',-1,'Upper',1);
     % histfit(normvse_lastne(idx), 20, 'Beta');
-    title('Graf normaliziranih realnih lastnih vrednosti')
-    xlabel('Normalizirane lastne vrednosti')
-    ylabel('Število pojavitev')
+    title('Graf normaliziranih realnih lastnih vrednosti','FontSize', 15)
+    xlabel('Normalizirane lastne vrednosti','FontSize', 15)
+    ylabel('Delez pojavitev','FontSize', 15)
     hold on
     a = -1:1;
     b = pdf(pd1, a);
@@ -212,9 +209,8 @@ elseif matches(d,'norm')
     plot(f);
     hold on
     plot(x, y,'.');
-    title('Graf pricakovane vrednosti stevila realnih lastnih vrednosti')
-    xlabel('Velikost matrike')
-    ylabel('Pricakovana vrednost stevila realnih lastnih vrednosti')
+    title('(c) Graf pricakovane vrednosti stevila realnih lastnih vrednosti','FontSize', 15)
+    xlabel('Velikost matrike','FontSize', 15)
     st_realnih = sprintf('st_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, st_realnih)
 
@@ -227,15 +223,15 @@ elseif matches(d,'norm')
     %% Graf deleža realnih lastnih vrednosti
     figure
     ft = fittype('a*x^b'); %Zakaj ??
-    a = 1;
+    a = 1.2;
     b = -0.5; % -> korenska funkcija
     f = fit(x',z',ft);
     plot(f);
     hold on;
     plot(x,z,'.');
-    title('Graf deleza realnih lastnih vrednosti v odvisnosti od velikosti matrike')
-    xlabel('Velikost matrike')
-    ylabel('Delez realnih lastnih vrednosti')
+    title('(c) Graf deleza realnih lastnih vrednosti v odvisnosti od velikosti matrike','FontSize', 15)
+    xlabel('Velikost matrike','FontSize', 15)
+    ylabel('Delez realnih lastnih vrednosti','FontSize', 15)
     delez_realnih = sprintf('delez_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, delez_realnih)
 
@@ -245,7 +241,7 @@ elseif matches(d,'norm')
     %histogram(vse_sledi,20)
     pd2 = fitdist(vse_sledi,'Normal');
     histfit(vse_sledi,20)
-    title('Histogram vseh sledi')
+    title('(c) Histogram vseh sledi','FontSize', 15)
     sledi = sprintf('sledi_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, sledi)
     
@@ -256,7 +252,7 @@ elseif matches(d,'norm')
     %% Graf determinant
     figure
     histogram(vse_det,30)
-    title('Histogram vseh determinant')
+    title('(c) Histogram vseh determinant','FontSize', 15)
     determinante = sprintf('determinante_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, determinante)
     
@@ -266,22 +262,21 @@ elseif matches(d,'discr')
     figure
     axis equal
     plot(real(vse_lastne), imag(vse_lastne),'.')
-    title('Graf vseh lastnih vrednosti v kompleksni ravnini')
+    title('(d) Graf vseh lastnih vrednosti v kompleksni ravnini','FontSize', 15)
     vselastne = sprintf('vselastne_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, vselastne)
 
     %% Graf pricakovane vrednosti realnih lastnih v odvisnosti od velikosti matrike
     figure
-    ft = fittype('a*x^b'); %Zakaj ??
-    a = 1.5; 
-    b = 0.4; % ~ 1/2 -> korenska funkcija
+    ft=fittype('A*sqrt(x)');
+    A=sqrt(2/pi);
     f = fit(x',y',ft);
     plot(f);
     hold on;
     plot(x, y,'.');
-    title('Graf pricakovane vrednosti stevila realnih lastnih vrednosti')
-    xlabel('Velikost matrike')
-    ylabel('Pricakovana vrednost stevila realnih lastnih vrednosti')
+    title('(d) Graf pricakovane vrednosti stevila realnih lastnih vrednosti','FontSize', 15)
+    xlabel('Velikost matrike','FontSize', 15)
+    ylabel('Pricakovana vrednost stevila realnih lastnih vrednosti','FontSize', 15)
     st_realnih = sprintf('st_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, st_realnih)
     
@@ -294,9 +289,9 @@ elseif matches(d,'discr')
     plot(f);
     hold on;
     plot(x,z,'.');
-    title('Graf deleza realnih lastnih vrednosti v odvisnosti od velikosti matrike')
-    xlabel('Velikost matrike')
-    ylabel('Delez realnih lastnih vrednosti')
+    title('(d) Graf deleza realnih lastnih vrednosti v odvisnosti od velikosti matrike','FontSize', 15)
+    xlabel('Velikost matrike','FontSize', 15)
+    ylabel('Delez realnih lastnih vrednosti','FontSize', 15)
     delez_realnih = sprintf('delez_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, delez_realnih)
 
@@ -305,7 +300,7 @@ elseif matches(d,'discr')
     figure
     pd2 = fitdist(vse_sledi,'Normal');
     histfit(vse_sledi,20)
-    title('Histogram vseh sledi')
+    title('(d) Histogram vseh sledi','FontSize', 15)
     sledi = sprintf('sledi_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, sledi)
 
@@ -315,7 +310,7 @@ elseif matches(d,'discr')
     %% Graf determinant
     figure
     histogram(vse_det,30)
-    title('Histogram vseh determinant')
+    title('(d) Histogram vseh determinant','FontSize', 15)
     determinante = sprintf('determinante_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, determinante)
     
