@@ -12,7 +12,7 @@ function [vse_lastne, vse_sledi, vse_det] = fanaliza_sim(n, st_ponovitev, d)
             A = rand(n);
         elseif matches(d,'int')
             % uniformly distributed random integers in the range defined by r
-            A = randi(10,n);
+            A = randi([-5,5],n);
         elseif matches(d,'norm')
             % normally distributed random numbers
             A = randn(n);

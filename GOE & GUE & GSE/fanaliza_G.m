@@ -1,4 +1,4 @@
-function [vse_lastne, normvse_lastne, spacing, mean_spacing] = fanaliza(n, st_ponovitev, tip)
+function [vse_lastne, normvse_lastne, spacing, mean_spacing] = fanaliza_G(n, st_ponovitev, tip)
 
     vse_lastne = zeros(n, st_ponovitev); % matrix of all eigenvalues
     normvse_lastne = zeros(n, st_ponovitev); % lamda/sqrt(n)

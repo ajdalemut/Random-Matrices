@@ -1,11 +1,13 @@
+% dolocimo velikost nakljucne matrike, porazdelitev za konstrukcijo in stevilo ponovitev konstrukcije
+
 n = 50;
 st_ponovitev = 50000;
 
-[vse_lastne_GOE, normvse_lastne_GOE, spacing_GOE, mean_spacing_GOE] = fanaliza(n, st_ponovitev, 'GOE');
-[vse_lastne_GUE, normvse_lastne_GUE, spacing_GUE, mean_spacing_GUE] = fanaliza(n, st_ponovitev, 'GUE');
-[vse_lastne_GSE, normvse_lastne_GSE, spacing_GSE, mean_spacing_GSE] = fanaliza(n, st_ponovitev, 'GSE');
+[vse_lastne_GOE, normvse_lastne_GOE, spacing_GOE, mean_spacing_GOE] = fanaliza_G(n, st_ponovitev, 'GOE');
+[vse_lastne_GUE, normvse_lastne_GUE, spacing_GUE, mean_spacing_GUE] = fanaliza_G(n, st_ponovitev, 'GUE');
+[vse_lastne_GSE, normvse_lastne_GSE, spacing_GSE, mean_spacing_GSE] = fanaliza_G(n, st_ponovitev, 'GSE');
 
-% density of eigenvalues-----------------------------------
+%% -----------density of eigenvalues-----------------------------------
 figure
 [values1, edges1] = histcounts(vse_lastne_GOE, 40,'Normalization', 'pdf');
 centers1 = (edges1(1:end-1)+edges1(2:end))/2;
@@ -21,11 +23,9 @@ plot(centers1, values1, '-', centers2, values2, '-', centers3, values3, '-')
 legend('GOE','GUE', 'GSE')
 
 lastne = sprintf('lastne_%d_%d.eps',n,st_ponovitev);
-saveas(gcf, lastne)
+saveas(gcf, lastne,'epsc')
 
-%---------level spacing---------------------------------------------
-
-
+%% --------level spacing---------------------------------------------
 figure
 
 [values1, edges1] = histcounts(spacing_GOE,40,'Normalization', 'pdf');
@@ -50,9 +50,9 @@ plot(x,y1,'-',x,y2,'-',x,y3,'-')
 legend('GOE','GUE','GSE')
 
 level_spacing = sprintf('level_spacing_%d_%d.eps',n,st_ponovitev);
-saveas(gcf, level_spacing)
+saveas(gcf, level_spacing,'epsc')
 
-%----------------------------------------------------------------------
+%% -----------------Normalizirane lastne-----------------------------------------------------
 figure
 
 [values1, edges1] = histcounts(vse_lastne_GOE./mean_spacing_GOE,40,'Normalization', 'pdf');
@@ -69,7 +69,7 @@ plot(centers1, values1, '-', centers2, values2, '-', centers3, values3, '-')
 legend('GOE','GUE','GSE')
 
 normalizirane_lastne = sprintf('normalizirane_lastne_%d_%d.eps',n,st_ponovitev);
-saveas(gcf, normalizirane_lastne)
+saveas(gcf, normalizirane_lastne,'epsc')
 
 
 
