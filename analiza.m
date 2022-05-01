@@ -1,11 +1,11 @@
 % dolocimo velikost nakljucne matrike, porazdelitev za konstrukcijo in stevilo ponovitev konstrukcije
 
 d = 'norm'; % 'uni'/'int'/'norm'/'discr'
-n = 50;
+n = 500;
 st_ponovitev = 400;
 
 %-------------------------------------------------------------------------------------
-%zazenemo glavno funkcijo glede na izbrane spremenljivke
+% zazenemo glavno funkcijo glede na izbrane spremenljivke
 [stevilo_realnih_lastnih, vse_lastne, normvse_lastne, vse_sledi, vse_det] = fanaliza(n, st_ponovitev, d);
 
 
@@ -50,12 +50,21 @@ end
 %-------UNI, INT, DISCR-------------------------------------------------------
 if matches(d,'uni') || matches(d,'int') || matches(d,'discr') 
     
+    if matches(d,'uni')
+        oznaka = 'a';
+    elseif  matches(d,'int')
+        oznaka = 'b';
+    else
+        oznaka = 'd';
+    end
+    
     %% Graf lastnih vrednosti
     figure
     plot(real(vse_lastne), imag(vse_lastne),'.')
-    title('(a) Graf vseh lastnih vrednosti v kompleksni ravnini', 'FontSize', 15)
+    axis equal
+    title(sprintf('(%s) Graf vseh lastnih vrednosti v kompleksni ravnini',oznaka), 'FontSize', 15)
     vselastne = sprintf('vselastne_%s_%d_%d.eps',d,n,st_ponovitev);
-    saveas(gcf, vselastne)
+    saveas(gcf, vselastne,'epsc')
 
     %% Graf pricakovane vrednosti realnih lastnih v odvisnosti od velikosti matrike
     figure
@@ -65,12 +74,12 @@ if matches(d,'uni') || matches(d,'int') || matches(d,'discr')
     plot(f);
     hold on;
     plot(x, y,'.');
-    title('(a) Graf pricakovane vrednosti stevila realnih lastnih vrednosti','FontSize', 15)
+    title(sprintf('(%s) Graf pricakovane vrednosti stevila realnih lastnih vrednosti', oznaka) ,'FontSize', 15)
     xlabel('Velikost matrike','FontSize', 10)
     ylabel('Pricakovana vrednost','FontSize', 10)
     legend({'Teoreticna krivulja za normalno porazdelitev', 'Eksperimentalne vrednosti'}, 'Location', 'SouthEast')
     st_realnih = sprintf('st_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
-    saveas(gcf, st_realnih)
+    saveas(gcf, st_realnih,'epsc')
     
     %% Graf deleza realnih lastnih vrednosti
     figure
@@ -81,31 +90,63 @@ if matches(d,'uni') || matches(d,'int') || matches(d,'discr')
     plot(f);
     hold on;
     plot(x,z,'.');
-    title('(a) Graf deleza realnih lastnih vrednosti','FontSize', 15)
+    title(sprintf('(%s) Graf deleza realnih lastnih vrednosti', oznaka),'FontSize', 15)
     xlabel('Velikost matrike','FontSize', 10)
     ylabel('Delez realnih lastnih vrednosti','FontSize', 10)
     legend({'Teoreticna krivulja za normalno porazdelitev', 'Eksperimentalne vrednosti'})
     delez_realnih = sprintf('delez_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
-    saveas(gcf, delez_realnih)
+    saveas(gcf, delez_realnih,'epsc')
 
 
     %% Graf sledi 
     figure
     pd2 = fitdist(vse_sledi,'Normal');
-    histfit(vse_sledi,20)
-    title('(a) Histogram vseh sledi','FontSize', 15)
-    sledi = sprintf('sledi_%s_%d_%d.eps',d,n,st_ponovitev);
-    saveas(gcf, sledi)
+    h = histfit(vse_sledi,20);
+    h(1).FaceColor = [0.7 0.7 0.7];
+    title(sprintf('(%s) Histogram vseh sledi', oznaka), 'FontSize', 15)
 
-    fprintf('Pricakovana vrednost sledi: %f \n' , pd2.mu);
-    fprintf('Varianca sledi: %f \n' , pd2.sigma);
+    hold on;
+    mu = pd2.mu;
+    sigma = pd2.sigma;
+    xline(mu, 'Color', 'r', 'LineWidth', 2);
+    xline(mu - sigma, 'Color', 'r', 'LineWidth', 2, 'LineStyle', '--');
+    xline(mu + sigma, 'Color', 'r', 'LineWidth', 2, 'LineStyle', '--');
+    sMean = sprintf('Mean = %.3f\n  SD = %.3f', mu, sigma);
+    xL=xlim;
+    yL=ylim;
+    text(0.99*xL(2),0.99*yL(2),sMean,'HorizontalAlignment','right','VerticalAlignment','top')
+    
+    sledi = sprintf('sledi_%s_%d_%d.eps',d,n,st_ponovitev);
+    saveas(gcf, sledi,'epsc')
 
     %% Graf determinant
     figure
-    histogram(vse_det,30)
-    title('(a) Histogram vseh determinant','FontSize', 15)
+    histogram(vse_det,30,'FaceColor', [0.7 0.7 0.7])
+    title(sprintf('(%s) Histogram vseh determinant', oznaka),'FontSize', 15)
     determinante = sprintf('determinante_%s_%d_%d.eps',d,n,st_ponovitev);
-    saveas(gcf, determinante)
+    saveas(gcf, determinante,'epsc')
+    
+    % Graf logaritmirane determinante
+    log_det= log(abs(vse_det));
+    figure
+    pd2 = fitdist(log_det,'Normal');
+    h = histfit(log_det,20);
+    h(1).FaceColor = [0.7 0.7 0.7];
+    title(sprintf('(%s) Histogram logaritmov vseh determinant', oznaka),'FontSize', 15)
+    
+    hold on;
+    mu = pd2.mu;
+    sigma = pd2.sigma;
+    xline(mu, 'Color', 'r', 'LineWidth', 2);
+    xline(mu - sigma, 'Color', 'r', 'LineWidth', 2, 'LineStyle', '--');
+    xline(mu + sigma, 'Color', 'r', 'LineWidth', 2, 'LineStyle', '--');
+    sMean = sprintf('Mean = %.3f\n  SD = %.3f', mu, sigma);
+    xL=xlim;
+    yL=ylim;
+    text(0.99*xL(2),0.99*yL(2),sMean,'HorizontalAlignment','right','VerticalAlignment','top')
+    
+    log_determinante = sprintf('log_determinante_%s_%d_%d.eps',d,n,st_ponovitev);
+    saveas(gcf, log_determinante,'epsc')
    
 %----------------NORM------------------------------
 elseif matches(d,'norm')
@@ -116,7 +157,7 @@ elseif matches(d,'norm')
     axis equal
     title('(c) Graf vseh lastnih vrednosti v kompleksni ravnini','FontSize', 15)
     vselastne = sprintf('vselastne_%s_%d_%d.eps',d,n,st_ponovitev);
-    saveas(gcf, vselastne)
+    saveas(gcf, vselastne,'epsc')
 
 
     %% Graf normaliziranih lastnih vrednosti
@@ -125,14 +166,14 @@ elseif matches(d,'norm')
     axis equal
     title('Graf vseh normaliziranih lastnih vrednosti v kompleksni ravnini','FontSize', 15)
     norm_vselastne = sprintf('norm_vselastne_%s_%d_%d.eps',d,n,st_ponovitev);
-    saveas(gcf, norm_vselastne)
+    saveas(gcf, norm_vselastne,'epsc')
 
     %% Graf porazdelitve normaliziranih realnih lastnih vrednosti
     idx = (normvse_lastne==real(normvse_lastne));
     figure
-    histogram(normvse_lastne(idx),'Normalization','pdf');
+    histogram(normvse_lastne(idx),'Normalization','pdf','FaceColor', [0.7 0.7 0.7]);
     pd1 = makedist('Uniform','Lower',-1,'Upper',1);
-    % histfit(normvse_lastne(idx), 20, 'Beta');
+    ylim([0 0.6])
     title('Graf normaliziranih realnih lastnih vrednosti','FontSize', 15)
     xlabel('Normalizirane lastne vrednosti','FontSize', 15)
     ylabel('Delez pojavitev','FontSize', 15)
@@ -141,7 +182,7 @@ elseif matches(d,'norm')
     b = pdf(pd1, a);
     plot(a,b);
     poraz_norm_realnih = sprintf('poraz_norm_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
-    saveas(gcf, poraz_norm_realnih )
+    saveas(gcf, poraz_norm_realnih,'epsc')
 
 
  
@@ -158,7 +199,7 @@ elseif matches(d,'norm')
     ylabel('Pricakovana vrednost','FontSize', 10)
     legend({'Teoreticna krivulja za normalno porazdelitev', 'Eksperimentalne vrednosti'}, 'Location', 'SouthEast')
     st_realnih = sprintf('st_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
-    saveas(gcf, st_realnih)
+    saveas(gcf, st_realnih,'epsc')
 
     %% Tabela teoretinih in eksperimentalnih pricakovanih vrednosti
     teoreticna_pricakovana = [ 1, 1.41421, 1.70711, 1.94454, 2.14905, 2.33124, 2.49708, 2.65027, 2.79332, 2.92799];
@@ -168,7 +209,7 @@ elseif matches(d,'norm')
     
     %% Graf deleza realnih lastnih vrednosti
     figure
-    ft = fittype('a*x^b'); %Zakaj ??
+    ft = fittype('a*x^b'); 
     a = sqrt(2/pi);
     b = -0.5; % -> korenska funkcija
     f = fit(x',z',ft);
@@ -180,31 +221,60 @@ elseif matches(d,'norm')
     ylabel('Delez realnih lastnih vrednosti','FontSize', 10)
     legend({'Teoreticna krivulja za normalno porazdelitev', 'Eksperimentalne vrednosti'})
     delez_realnih = sprintf('delez_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
-    saveas(gcf, delez_realnih)
+    saveas(gcf, delez_realnih,'epsc')
 
 
     %% Graf sledi 
     figure
-    %histogram(vse_sledi,20)
     pd2 = fitdist(vse_sledi,'Normal');
-    histfit(vse_sledi,20)
+    h = histfit(vse_sledi,20);
+    h(1).FaceColor = [0.7 0.7 0.7];
     title('(c) Histogram vseh sledi','FontSize', 15)
-    sledi = sprintf('sledi_%s_%d_%d.eps',d,n,st_ponovitev);
-    saveas(gcf, sledi)
+
+    hold on;
+    mu = pd2.mu;
+    sigma = pd2.sigma;
+    xline(mu, 'Color', 'r', 'LineWidth', 2);
+    xline(mu - sigma, 'Color', 'r', 'LineWidth', 2, 'LineStyle', '--');
+    xline(mu + sigma, 'Color', 'r', 'LineWidth', 2, 'LineStyle', '--');
+    sMean = sprintf('Mean = %.3f\n  SD = %.3f', mu, sigma);
+    xL=xlim;
+    yL=ylim;
+    text(0.99*xL(2),0.99*yL(2),sMean,'HorizontalAlignment','right','VerticalAlignment','top')
     
-    fprintf('Pricakovana vrednost sledi: %f \n' , pd2.mu);
-    fprintf('Varianca sledi: %f \n' , pd2.sigma);
+    sledi = sprintf('sledi_%s_%d_%d.eps',d,n,st_ponovitev);
+    saveas(gcf, sledi,'epsc')
 
 
     %% Graf determinant
     figure
-    histogram(vse_det,30)
+    histogram(vse_det,30,'FaceColor', [0.7 0.7 0.7])
     title('(c) Histogram vseh determinant','FontSize', 15)
     determinante = sprintf('determinante_%s_%d_%d.eps',d,n,st_ponovitev);
-    saveas(gcf, determinante)
-
-
+    saveas(gcf, determinante,'epsc')
     
+    % Graf logaritmirane determinante
+    log_det= log(abs(vse_det));
+    figure
+    pd2 = fitdist(log_det,'Normal');
+    h = histfit(log_det,20);
+    h(1).FaceColor = [0.7 0.7 0.7];
+    title('(c) Histogram logaritmov vseh determinant','FontSize', 15)
+    
+    hold on;
+    mu = pd2.mu;
+    sigma = pd2.sigma;
+    xline(mu, 'Color', 'r', 'LineWidth', 2);
+    xline(mu - sigma, 'Color', 'r', 'LineWidth', 2, 'LineStyle', '--');
+    xline(mu + sigma, 'Color', 'r', 'LineWidth', 2, 'LineStyle', '--');
+    sMean = sprintf('Mean = %.3f\n  SD = %.3f', mu, sigma);
+    xL=xlim;
+    yL=ylim;
+    text(0.99*xL(2),0.99*yL(2),sMean,'HorizontalAlignment','right','VerticalAlignment','top')
+    
+    log_determinante = sprintf('log_determinante_%s_%d_%d.eps',d,n,st_ponovitev);
+    saveas(gcf, log_determinante,'epsc')
+
 else
     error('Unidentified distribution')
 end

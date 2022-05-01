@@ -1,12 +1,14 @@
+% dolocimo velikost nakljucne matrike in stevilo ponovitev konstrukcije
 n = 50;
 st_ponovitev = 50000;
 
-%zaženemo glavno funkcijo glede na izbrane spremenljivke
+% zazenemo glavne funkcije glede na izbrane spremenljivke 
 [vse_lastne_uni, vse_sledi_uni, vse_det_uni] = fanaliza_sim(n, st_ponovitev, 'uni');
 [vse_lastne_int, vse_sledi_int, vse_det_int] = fanaliza_sim(n, st_ponovitev, 'int');
 [vse_lastne_norm, vse_sledi_norm, vse_det_norm] = fanaliza_sim(n, st_ponovitev, 'norm');
 [vse_lastne_discr, vse_sledi_discr, vse_det_discr] = fanaliza_sim(n, st_ponovitev, 'discr');
 
+%% Izris gostote lastnih vrednosti za vse porazdelitve
 figure
 [values1, edges1] = histcounts(vse_lastne_uni, 40,'Normalization', 'pdf');
 centers1 = (edges1(1:end-1)+edges1(2:end))/2;
