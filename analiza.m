@@ -1,7 +1,7 @@
 % dolocimo velikost nakljucne matrike, porazdelitev za konstrukcijo in stevilo ponovitev konstrukcije
 
 d = 'norm'; % 'uni'/'int'/'norm'/'discr'
-n = 500;
+n = 50;
 st_ponovitev = 400;
 
 %-------------------------------------------------------------------------------------
@@ -38,10 +38,12 @@ maxdim = 100; %maksimalna velikost matrike
 x = 1:1:maxdim;
 y = zeros(1,maxdim);
 z = zeros(1,maxdim);
+det = zeros(st_ponovitev , maxdim);
 for i = x
     [stevilo_realnih_lastnih1, vse_lastne1, normvse_lastne1, vse_sledi1, vse_det1] = fanaliza(i, st_ponovitev, d);
     y(i) =  mean(stevilo_realnih_lastnih1); %povprecno stevilo realnih
     z(i) = y(i)/i ; %delez realnih
+    det(:,i) = vse_det1;
 end
 
 
@@ -63,37 +65,47 @@ if matches(d,'uni') || matches(d,'int') || matches(d,'discr')
     plot(real(vse_lastne), imag(vse_lastne),'.')
     axis equal
     title(sprintf('(%s) Graf vseh lastnih vrednosti v kompleksni ravnini',oznaka), 'FontSize', 15)
+    
     vselastne = sprintf('vselastne_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, vselastne,'epsc')
 
     %% Graf pricakovane vrednosti realnih lastnih v odvisnosti od velikosti matrike
     figure
-    ft=fittype('A*sqrt(x)');
-    A=sqrt(2/pi);
-    f = fit(x',y',ft);
+    ft = fittype('a*x^b');
+    f = fit(x',y',ft,'StartPoint',[0,0]);
     plot(f);
-    hold on;
+    hold on
+    
+    a = f.a;
+    b = f.b;
+    param = sprintf('f(n) = an^b, a = %.3f, b = %.3f', a, b);
+    
     plot(x, y,'.');
     title(sprintf('(%s) Graf pricakovane vrednosti stevila realnih lastnih vrednosti', oznaka) ,'FontSize', 15)
     xlabel('Velikost matrike','FontSize', 10)
     ylabel('Pricakovana vrednost','FontSize', 10)
-    legend({'Teoreticna krivulja za normalno porazdelitev', 'Eksperimentalne vrednosti'}, 'Location', 'SouthEast')
+    legend({param, 'Eksperimentalne vrednosti'}, 'Location', 'SouthEast')
+    
     st_realnih = sprintf('st_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, st_realnih,'epsc')
     
     %% Graf deleza realnih lastnih vrednosti
     figure
-    ft=fittype('a*x^b'); 
-    a = sqrt(2/pi); 
-    b = -0.5; % -> korenska funkcija
-    f = fit(x',z',ft);
+    ft = fittype('a*x^b'); 
+    f = fit(x',z',ft,'StartPoint',[0,0]);
     plot(f);
-    hold on;
+    hold on
+    
+    a = f.a;
+    b = f.b;
+    param = sprintf('f(n) = an^b, a = %.3f, b = %.3f', a, b);
+    
     plot(x,z,'.');
     title(sprintf('(%s) Graf deleza realnih lastnih vrednosti', oznaka),'FontSize', 15)
     xlabel('Velikost matrike','FontSize', 10)
     ylabel('Delez realnih lastnih vrednosti','FontSize', 10)
-    legend({'Teoreticna krivulja za normalno porazdelitev', 'Eksperimentalne vrednosti'})
+    legend({param, 'Eksperimentalne vrednosti'})
+    
     delez_realnih = sprintf('delez_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, delez_realnih,'epsc')
 
@@ -105,7 +117,7 @@ if matches(d,'uni') || matches(d,'int') || matches(d,'discr')
     h(1).FaceColor = [0.7 0.7 0.7];
     title(sprintf('(%s) Histogram vseh sledi', oznaka), 'FontSize', 15)
 
-    hold on;
+    hold on
     mu = pd2.mu;
     sigma = pd2.sigma;
     xline(mu, 'Color', 'r', 'LineWidth', 2);
@@ -134,7 +146,7 @@ if matches(d,'uni') || matches(d,'int') || matches(d,'discr')
     h(1).FaceColor = [0.7 0.7 0.7];
     title(sprintf('(%s) Histogram logaritmov vseh determinant', oznaka),'FontSize', 15)
     
-    hold on;
+    hold on
     mu = pd2.mu;
     sigma = pd2.sigma;
     xline(mu, 'Color', 'r', 'LineWidth', 2);
@@ -156,6 +168,7 @@ elseif matches(d,'norm')
     plot(real(vse_lastne), imag(vse_lastne),'.')
     axis equal
     title('(c) Graf vseh lastnih vrednosti v kompleksni ravnini','FontSize', 15)
+    
     vselastne = sprintf('vselastne_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, vselastne,'epsc')
 
@@ -165,6 +178,7 @@ elseif matches(d,'norm')
     plot(real(normvse_lastne), imag(normvse_lastne),'.');
     axis equal
     title('Graf vseh normaliziranih lastnih vrednosti v kompleksni ravnini','FontSize', 15)
+    
     norm_vselastne = sprintf('norm_vselastne_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, norm_vselastne,'epsc')
 
@@ -181,23 +195,26 @@ elseif matches(d,'norm')
     a = -1:1;
     b = pdf(pd1, a);
     plot(a,b);
+    
     poraz_norm_realnih = sprintf('poraz_norm_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, poraz_norm_realnih,'epsc')
 
-
- 
     %% Graf pricakovane vrednosti realnih lastnih v odvisnosti od velikosti matrike
     figure
     ft=fittype('A*sqrt(x)');
-    A=sqrt(2/pi); %teoreticno znana konstanta How Many Eigenvalues of a Random Matrix are Real? Alan Edelman; Eric Kostlan; Michael Shub
-    f = fit(x', y',ft);
+    f = fit(x', y',ft,'StartPoint',[0]);
     plot(f);
     hold on
+    
+    A = f.A;
+    param = sprintf('f(n) = Asqrt(n), A = %.3f', A);
+
     plot(x, y,'.');
     title('(c) Graf pricakovane vrednosti stevila realnih lastnih vrednosti','FontSize', 15)
     xlabel('Velikost matrike','FontSize', 10)
     ylabel('Pricakovana vrednost','FontSize', 10)
-    legend({'Teoreticna krivulja za normalno porazdelitev', 'Eksperimentalne vrednosti'}, 'Location', 'SouthEast')
+    legend({param, 'Eksperimentalne vrednosti'}, 'Location', 'SouthEast')
+    
     st_realnih = sprintf('st_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, st_realnih,'epsc')
 
@@ -210,16 +227,20 @@ elseif matches(d,'norm')
     %% Graf deleza realnih lastnih vrednosti
     figure
     ft = fittype('a*x^b'); 
-    a = sqrt(2/pi);
-    b = -0.5; % -> korenska funkcija
-    f = fit(x',z',ft);
+    f = fit(x',z',ft,'StartPoint',[0,0]);
     plot(f);
-    hold on;
+    hold on
+    
+    a = f.a;
+    b = f.b;
+    param = sprintf('f(n) = an^b, a = %.3f, b = %.3f', a, b);
+    
     plot(x,z,'.');
     title('(c) Graf deleza realnih lastnih vrednosti','FontSize', 15)
     xlabel('Velikost matrike','FontSize', 10)
     ylabel('Delez realnih lastnih vrednosti','FontSize', 10)
-    legend({'Teoreticna krivulja za normalno porazdelitev', 'Eksperimentalne vrednosti'})
+    legend({param, 'Eksperimentalne vrednosti'})
+    
     delez_realnih = sprintf('delez_realnih_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, delez_realnih,'epsc')
 
@@ -231,7 +252,7 @@ elseif matches(d,'norm')
     h(1).FaceColor = [0.7 0.7 0.7];
     title('(c) Histogram vseh sledi','FontSize', 15)
 
-    hold on;
+    hold on
     mu = pd2.mu;
     sigma = pd2.sigma;
     xline(mu, 'Color', 'r', 'LineWidth', 2);
@@ -250,6 +271,7 @@ elseif matches(d,'norm')
     figure
     histogram(vse_det,30,'FaceColor', [0.7 0.7 0.7])
     title('(c) Histogram vseh determinant','FontSize', 15)
+    
     determinante = sprintf('determinante_%s_%d_%d.eps',d,n,st_ponovitev);
     saveas(gcf, determinante,'epsc')
     
@@ -261,7 +283,7 @@ elseif matches(d,'norm')
     h(1).FaceColor = [0.7 0.7 0.7];
     title('(c) Histogram logaritmov vseh determinant','FontSize', 15)
     
-    hold on;
+    hold on
     mu = pd2.mu;
     sigma = pd2.sigma;
     xline(mu, 'Color', 'r', 'LineWidth', 2);
