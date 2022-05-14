@@ -1,5 +1,5 @@
 % dolocimo velikost nakljucne matrike in stevilo ponovitev konstrukcije
-d = 'norm'; % 'uni'/'int'/'norm'/'discr'
+d = 'discr'; % 'uni'/'int'/'norm'/'discr'
 st_ponovitev = 400;
 
 %% Pomozna funkcija za paramatre v odvisnosti od velikosti matrike
@@ -11,9 +11,9 @@ sigma_det = zeros(1, maxdim);
 for i = n
     [stevilo_realnih_lastnih1, vse_lastne1, normvse_lastne1, vse_sledi1, vse_det1] = fanaliza(i, st_ponovitev, d);
     log_det = log(abs(vse_det1));
-    sigma_tr(i) = sqrt(var(vse_sledi1));
+    sigma_tr(i) = var(vse_sledi1);
     mu_det(i) = mean(log_det);
-    sigma_det(i) = sqrt(var(log_det));
+    sigma_det(i) = var(log_det);
 end
 
 % Oznake za naslove-----------------------------
@@ -47,7 +47,7 @@ end
     title(sprintf('(%s) Varianca sledi ', oznaka),'FontSize', 15)
     legend({param, 'Eksperimentalne vrednosti'},'Location', 'SouthEast')
     
-    tr = sprintf('parametri_tr_mu_%s_%d.eps',d,st_ponovitev);
+    tr = sprintf('parametri_tr_sigma_%s_%d.eps',d,st_ponovitev);
     saveas(gcf, tr,'epsc')
     
     
@@ -172,7 +172,7 @@ elseif matches(d,'discr')
 
     % variance logaritma determinante 
     figure
-    plot(n, sigma_det,'.');
+    plot(n, sigma_det,'r.');
     xlabel('Velikost matrike','FontSize', 10)
     ylabel('Varianca','FontSize', 10)
     title(sprintf('(%s) Varianca logaritma determinante', oznaka),'FontSize', 15)
@@ -201,13 +201,13 @@ elseif matches(d,'norm')
 
     % variance logaritma determinante 
     figure
-    ft1 = fittype('sqrt((1/2).*log(x)) + a');
+    ft1 = fittype('(1/2).*log(x) + a');
     f1 = fit(n',sigma_det', ft1,'StartPoint',[0]); 
     plot(f1);
     hold on
     
     a = f1.a;
-    param = sprintf('f(n) = sqrt((1/2)*log(n)) + a, a = %.3f', a);
+    param = sprintf('f(n) = (1/2)*log(n) + a, a = %.3f', a);
     
     plot(n, sigma_det,'.');
     xlabel('Velikost matrike','FontSize', 10)

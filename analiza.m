@@ -32,6 +32,10 @@ fprintf('Verjetnost, da so vse lastne vrednosti realne: %.3f \n', verjetnost_vse
 povprecje_st_realnih = mean(stevilo_realnih_lastnih);
 fprintf('Povprecje stevila realnih: %.3f \n' , povprecje_st_realnih);
 
+tabela = table( verjetnost_vsajenarealna, verjetnost_vserealne, povprecje_st_realnih ,'VariableNames',["Vsaj ena realna","Vse realne", "Povprecno stevilo realnih"]);
+verjetnosti = sprintf('verjetnosti_%s_%d_%d.txt',d,n,st_ponovitev);
+writetable(tabela, verjetnosti);
+
 %% Pomozna funkcija za paramatre v odvisnosti od velikosti matrike
 
 maxdim = 100; %maksimalna velikost matrike

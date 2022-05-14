@@ -1,75 +1,68 @@
 % dolocimo velikost nakljucne matrike, porazdelitev za konstrukcijo in stevilo ponovitev konstrukcije
 
+d = 'GSE'; % 'GOE'/'GUE'/'GSE'
 n = 50;
 st_ponovitev = 50000;
 
-[vse_lastne_GOE, normvse_lastne_GOE, spacing_GOE, mean_spacing_GOE] = fanaliza_G(n, st_ponovitev, 'GOE');
-[vse_lastne_GUE, normvse_lastne_GUE, spacing_GUE, mean_spacing_GUE] = fanaliza_G(n, st_ponovitev, 'GUE');
-[vse_lastne_GSE, normvse_lastne_GSE, spacing_GSE, mean_spacing_GSE] = fanaliza_G(n, st_ponovitev, 'GSE');
+[vse_lastne, normvse_lastne, spacing, mean_spacing, vse_sledi, vse_det] = fanaliza_G(n, st_ponovitev, d);
 
-%% -----------density of eigenvalues-----------------------------------
+
+%% Graf sledi 
 figure
-[values1, edges1] = histcounts(vse_lastne_GOE, 40,'Normalization', 'pdf');
-centers1 = (edges1(1:end-1)+edges1(2:end))/2;
+pd2 = fitdist(vse_sledi,'Normal');
+h = histfit(vse_sledi,20);
+h(1).FaceColor = [0.7 0.7 0.7];
+title(sprintf('(%s) Histogram vseh sledi', d), 'FontSize', 15)
 
-[values2, edges2] = histcounts(vse_lastne_GUE, 40,'Normalization', 'pdf');
-centers2 = (edges2(1:end-1)+edges2(2:end))/2;
-
-[values3, edges3] = histcounts(vse_lastne_GSE, 40,'Normalization', 'pdf');
-centers3 = (edges3(1:end-1)+edges3(2:end))/2;
-
-plot(centers1, values1, '-', centers2, values2, '-', centers3, values3, '-')
-
-legend('GOE','GUE', 'GSE')
-
-lastne = sprintf('lastne_%d_%d.eps',n,st_ponovitev);
-saveas(gcf, lastne,'epsc')
-
-%% --------level spacing---------------------------------------------
-figure
-
-[values1, edges1] = histcounts(spacing_GOE,40,'Normalization', 'pdf');
-centers1 = (edges1(1:end-1)+edges1(2:end))/2;
-
-[values2, edges2] = histcounts(spacing_GUE,40,'Normalization', 'pdf');
-centers2 = (edges2(1:end-1)+edges2(2:end))/2;
-
-[values3, edges3] = histcounts(spacing_GSE, 40,'Normalization', 'pdf');
-centers3 = (edges3(1:end-1)+edges3(2:end))/2;
-
-plot(centers1, values1, '-', centers2, values2, '-', centers3, values3, '-')
-
-% analitic distributions of level spacings
-x = linspace(0,10,1000);
-y1=(pi/2).*x.*exp(-(pi/4).*(x.^2));
-y2=(32/(pi^2)).*(x.^2).*exp(-(4/pi).*(x.^2));
-y3=((2^18)/(3^6 * pi^3)).*(x.^4).*exp(-(64/(9*pi)).*(x.^2));
 hold on
-plot(x,y1,'-',x,y2,'-',x,y3,'-')
+mu = pd2.mu;
+sigma = pd2.sigma;
+xline(mu, 'Color', 'r', 'LineWidth', 2);
+xline(mu - sigma, 'Color', 'r', 'LineWidth', 2, 'LineStyle', '--');
+xline(mu + sigma, 'Color', 'r', 'LineWidth', 2, 'LineStyle', '--');
+sMean = sprintf('Mean = %.3f\n  SD = %.3f', mu, sigma);
+xL=xlim;
+yL=ylim;
+text(0.99*xL(2),0.99*yL(2),sMean,'HorizontalAlignment','right','VerticalAlignment','top')
 
-legend('GOE','GUE','GSE')
+sledi = sprintf('sledi_G_%s_%d_%d.eps',d,n,st_ponovitev);
+saveas(gcf, sledi,'epsc')
 
-level_spacing = sprintf('level_spacing_%d_%d.eps',n,st_ponovitev);
-saveas(gcf, level_spacing,'epsc')
-
-%% -----------------Normalizirane lastne-----------------------------------------------------
+%% Graf determinant
+    
 figure
+plot(real(vse_det), imag(vse_det),'.')
+axis equal
+title(sprintf('(%s) Graf vseh determinant v kompleksni ravnini',d), 'FontSize', 15)
+determinante1 = sprintf('realnedeterminante_G_%s_%d_%d.eps',d,n,st_ponovitev);
+saveas(gcf, determinante1,'epsc')
+    
+figure
+histogram(real(vse_det),30,'FaceColor', [0.7 0.7 0.7])
+title(sprintf('(%s) Histogram vseh determinant', d),'FontSize', 15)
+determinante2 = sprintf('determinante_G_%s_%d_%d.eps',d,n,st_ponovitev);
+saveas(gcf, determinante2,'epsc')
 
-[values1, edges1] = histcounts(vse_lastne_GOE./mean_spacing_GOE,40,'Normalization', 'pdf');
-centers1 = (edges1(1:end-1)+edges1(2:end))/2;
+% Graf logaritmirane determinante
+log_det= log(abs(vse_det));
+figure
+pd2 = fitdist(log_det,'Normal');
+h = histfit(log_det,20);
+h(1).FaceColor = [0.7 0.7 0.7];
+title(sprintf('(%s) Histogram logaritmov vseh determinant', d),'FontSize', 15)
 
-[values2, edges2] = histcounts(vse_lastne_GUE./mean_spacing_GUE,40,'Normalization', 'pdf');
-centers2 = (edges2(1:end-1)+edges2(2:end))/2;
+hold on
+mu = pd2.mu;
+sigma = pd2.sigma;
+xline(mu, 'Color', 'r', 'LineWidth', 2);
+xline(mu - sigma, 'Color', 'r', 'LineWidth', 2, 'LineStyle', '--');
+xline(mu + sigma, 'Color', 'r', 'LineWidth', 2, 'LineStyle', '--');
+sMean = sprintf('Mean = %.3f\n  SD = %.3f', mu, sigma);
+xL=xlim;
+yL=ylim;
+text(0.99*xL(2),0.99*yL(2),sMean,'HorizontalAlignment','right','VerticalAlignment','top')
 
-[values3, edges3] = histcounts(vse_lastne_GUE./mean_spacing_GSE,40,'Normalization', 'pdf');
-centers3 = (edges3(1:end-1)+edges3(2:end))/2;
+log_determinante = sprintf('log_determinante_G_%s_%d_%d.eps',d,n,st_ponovitev);
+saveas(gcf, log_determinante,'epsc')
 
-plot(centers1, values1, '-', centers2, values2, '-', centers3, values3, '-')
-
-legend('GOE','GUE','GSE')
-
-normalizirane_lastne = sprintf('normalizirane_lastne_%d_%d.eps',n,st_ponovitev);
-saveas(gcf, normalizirane_lastne,'epsc')
-
-
-
+   
