@@ -4,7 +4,7 @@ d = 'GSE'; % 'GOE'/'GUE'/'GSE'
 n = 50;
 st_ponovitev = 50000;
 
-[vse_lastne, normvse_lastne, spacing, mean_spacing, vse_sledi, vse_det] = fanaliza_G(n, st_ponovitev, d);
+[vse_lastne, spacing, mean_spacing, vse_sledi, vse_det] = fanaliza_G(n, st_ponovitev, d);
 
 
 %% Graf sledi 

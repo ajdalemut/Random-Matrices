@@ -42,12 +42,10 @@ maxdim = 100; %maksimalna velikost matrike
 x = 1:1:maxdim;
 y = zeros(1,maxdim);
 z = zeros(1,maxdim);
-det = zeros(st_ponovitev , maxdim);
 for i = x
     [stevilo_realnih_lastnih1, vse_lastne1, normvse_lastne1, vse_sledi1, vse_det1] = fanaliza(i, st_ponovitev, d);
     y(i) =  mean(stevilo_realnih_lastnih1); %povprecno stevilo realnih
     z(i) = y(i)/i ; %delez realnih
-    det(:,i) = vse_det1;
 end
 
 

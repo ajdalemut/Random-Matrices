@@ -1,7 +1,6 @@
-function [vse_lastne, normvse_lastne, spacing, mean_spacing, vse_sledi, vse_det] = fanaliza_G(n, st_ponovitev, tip)
+function [vse_lastne, spacing, mean_spacing, vse_sledi, vse_det] = fanaliza_G(n, st_ponovitev, tip)
 
     vse_lastne = zeros(n, st_ponovitev); % matrix of all eigenvalues
-    normvse_lastne = zeros(n, st_ponovitev); % lamda/sqrt(n)
     spacing = zeros(n-1,st_ponovitev); % normalized spacings
     mean_spacing = zeros(1, st_ponovitev);
     vse_sledi = zeros(st_ponovitev,1); % vector of all traces
@@ -30,17 +29,14 @@ function [vse_lastne, normvse_lastne, spacing, mean_spacing, vse_sledi, vse_det]
         
         %% calculation of eigenvalues
         if matches(tip,'GOE') || matches(tip,'GUE')
-
             lastne = sort(eig(A));
             for l = 1 : n
                 vse_lastne(l,k) = lastne(l);
-                normvse_lastne(l,k) = lastne(l)/sqrt(n);
             end
         else %if tip = 'GSE'
             lastne = sort(eig(A));
             for l = 1 : n
                 vse_lastne(l,k) = lastne(2*l);
-                normvse_lastne(l,k) = lastne(2*l)/sqrt(n);
             end
         end
         
